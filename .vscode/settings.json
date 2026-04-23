@@ -1,0 +1,9 @@
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "volar.takeOverMode.enabled": true,
+  "extensions.ignoreRecommendations": false,
+  "vue.server.hybridMode": true,
+  "vue.inlayHints.missingProps": true,
+  "vue.inlayHints.inlineHandlerLeading": true
+}
