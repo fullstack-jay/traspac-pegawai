@@ -87,7 +87,7 @@
 
       <!-- Footer -->
       <p class="text-center text-[11px] mt-5" style="color:#3f3f46">
-        © 2025 BIG — Badan Informasi Geospasial
+        © {{ currentYear }} Rizqi Reza Ardiansyah
       </p>
 
     </div>
@@ -104,6 +104,7 @@ const authStore    = useAuthStore()
 const router       = useRouter()
 const form         = reactive({ username: '', password: '' })
 const showPassword = ref(false)
+const currentYear  = new Date().getFullYear()
 
 async function handleLogin() {
   try {
