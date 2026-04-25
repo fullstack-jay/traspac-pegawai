@@ -305,20 +305,22 @@ watch(() => props.employee, (emp) => {
     })
     fotoPreview.value = emp.foto || ''
     fotoUrl.value     = emp.foto || ''
-
-    // Set ID setelah master data loaded
-    nextTick(() => {
-      const g = golonganList.value.find(x => x.nama === emp.golongan)
-      const e = eselonList.value.find(x => x.nama === emp.eselon)
-      const a = agamaList.value.find(x => x.nama === emp.agama)
-      const u = unitKerjaList.value.find(x => x.nama === emp.unitKerja)
-      if (g) formIds.golonganId  = g.id
-      if (e) formIds.eselonId    = e.id
-      if (a) formIds.agamaId     = a.id
-      if (u) formIds.unitKerjaId = u.id
-    })
   }
 }, { immediate: true })
+
+// Helper: sync formIds dari nama setelah master data tersedia
+function syncFormIds() {
+  const emp = props.employee
+  if (!emp) return
+  const g = golonganList.value.find(x => x.nama === emp.golongan)
+  const e = eselonList.value.find(x => x.nama === emp.eselon)
+  const a = agamaList.value.find(x => x.nama === emp.agama)
+  const u = unitKerjaList.value.find(x => x.nama === emp.unitKerja)
+  if (g) formIds.golonganId  = g.id
+  if (e) formIds.eselonId    = e.id
+  if (a) formIds.agamaId     = a.id
+  if (u) formIds.unitKerjaId = u.id
+}
 
 onMounted(async () => {
   const [agama, golongan, eselon, unitKerja] = await Promise.all([
@@ -327,10 +329,13 @@ onMounted(async () => {
     masterService.getEselon(),
     masterService.getUnitKerja(),
   ])
-  agamaList.value    = agama
-  golonganList.value = golongan
-  eselonList.value   = eselon
+  agamaList.value     = agama
+  golonganList.value  = golongan
+  eselonList.value    = eselon
   unitKerjaList.value = unitKerja
+
+  // Sync ID setelah master data tersedia (untuk mode edit)
+  syncFormIds()
 })
 
 async function handleFotoChange(e: Event) {
