@@ -59,30 +59,73 @@ Aplikasi ini dibangun dengan pendekatan **microservice frontend** dimana setiap 
 
 ## 📊 Struktur Database
 
-Berdasarkan tabel referensi, struktur data pegawai:
+Database sudah dinormalisasi. Field seperti golongan, eselon, agama, dan unit kerja disimpan sebagai relasi ke tabel master masing-masing.
+
+### Tabel Utama
+
+#### `users` — Autentikasi
+```sql
+id, name, username (unique), password (hashed),
+role (admin | operator | viewer), unit_kerja,
+created_at, updated_at
+```
+
+#### `employees` — Data Pegawai
+```sql
+id, nip (unique), nama, tempat_lahir, tanggal_lahir,
+jenis_kelamin (L/P), alamat, jabatan, tempat_tugas,
+no_hp, npwp, foto (URL),
+golongan_id (FK → golongans.id),
+eselon_id   (FK → eselons.id),
+agama_id    (FK → agamas.id),
+unit_kerja_id (FK → unit_kerjas.id),
+created_at, updated_at, deleted_at (soft delete)
+```
+
+### Tabel Referensi (Master Data)
+
+| Tabel | Kolom Utama | Contoh Data |
+|-------|-------------|-------------|
+| `golongans` | id, nama, grade, keterangan | I/a, I/b, …, IV/e |
+| `eselons` | id, nama, keterangan | I, II, III, IV |
+| `agamas` | id, nama | Islam, Kristen, Katolik, Hindu, Buddha, Konghucu |
+| `unit_kerjas` | id, nama, kode | SET, PDG, PPS, PIG, PR, PSK, PPD |
+
+### TypeScript Interface (Frontend)
 
 ```typescript
 interface Employee {
-  id: string
-  nip: string                    // NIP pegawai
-  nama: string                   // Nama lengkap
-  tempatLahir: string            // Tempat lahir
-  tanggalLahir: string           // Tanggal lahir (YYYY-MM-DD)
-  jenisKelamin: 'L' | 'P'        // Jenis kelamin
-  alamat: string                 // Alamat lengkap
-  golongan: string               // Golongan (I/a - IV/e)
-  eselon: string                 // Eselon (I - V)
-  jabatan: string                // Nama jabatan
-  tempatTugas: string            // Kota tempat tugas
-  agama: string                  // Agama
-  unitKerja: string              // Unit kerja
-  noHp: string                   // Nomor HP
-  npwp: string                   // NPWP
-  foto?: string                  // URL/base64 foto
+  id?: string
+  nip: string
+  nama: string
+  tempatLahir: string
+  tanggalLahir: string           // format: YYYY-MM-DD
+  jenisKelamin: 'L' | 'P'
+  alamat: string
+  jabatan: string
+  tempatTugas: string
+  noHp: string
+  npwp: string
+  foto?: string                  // URL foto dari server
+
+  // Nilai nama — untuk ditampilkan di UI
+  golongan: string               // contoh: "IV/e"
+  eselon: string                 // contoh: "II"
+  agama: string                  // contoh: "Islam"
+  unitKerja: string              // contoh: "SET"
+
+  // Foreign key ID — dikirim ke backend saat create/update
+  golonganId?: number | null     // FK → golongans.id
+  eselonId?: number | null       // FK → eselons.id
+  agamaId?: number | null        // FK → agamas.id
+  unitKerjaId?: number | null    // FK → unit_kerjas.id
+
   createdAt?: string
   updatedAt?: string
 }
 ```
+
+> **Catatan:** Frontend menyimpan dua representasi untuk field relasi — nama (untuk tampilan) dan ID (untuk dikirim ke backend). Konversi dilakukan di `employeeService.ts` via fungsi `mapEmployee()`.
 
 ## 🚀 Instalasi & Menjalankan
 
@@ -111,15 +154,6 @@ Aplikasi akan berjalan di: http://localhost:3000
 npm run build
 npm run preview
 ```
-
-## 👤 Demo Akun Login
-
-| Role     | Username   | Password     | Akses                          |
-|----------|------------|--------------|--------------------------------|
-| Admin    | `admin`    | `admin123`   | Full access (CRUD + Delete)    |
-| Operator | `operator` | `operator123`| CRUD (tanpa delete)            |
-| Viewer   | `viewer`   | `viewer123`  | Read only                      |
-
 ## 📁 Struktur Folder
 
 ```
@@ -179,11 +213,12 @@ Saat ini aplikasi menggunakan **mock data** untuk demo. Untuk integrasi dengan b
 
 ## 🎨 Tech Stack
 
-- **Framework**: Nuxt 3 (Vue 3 + Vite)
+- **Framework**: Nuxt 4 (Vue 3 + Vite)
 - **State Management**: Pinia
 - **Styling**: Tailwind CSS
 - **TypeScript**: Full type safety
-- **Architecture**: Microservice Frontend Pattern
+- **Backend**: Laravel 11 + Sanctum
+- **Database**: MySQL / PostgreSQL (normalized schema)
 
 ## 📝 Catatan Implementasi
 
