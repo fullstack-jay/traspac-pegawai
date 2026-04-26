@@ -11,7 +11,6 @@ Aplikasi ini dibangun dengan pendekatan **microservice frontend** dimana setiap 
 1. **Auth Service** (`app/services/authService.ts`)
    - Endpoint: `AUTH_SERVICE_URL` (default: http://localhost:3001)
    - Fungsi: Login, logout, session management, token verification
-   - Mock users tersedia untuk demo
 
 2. **Employee Service** (`app/services/employeeService.ts`)
    - Endpoint: `EMPLOYEE_SERVICE_URL` (default: http://localhost:3002)
@@ -214,10 +213,7 @@ Print menggunakan `window.open()` dengan HTML template. Browser akan membuka win
 - Save as PDF
 - Adjust print settings
 
-## 📄 License
-
-© 2025 BIG - Badan Informasi Geospasial
 
 ---
 
-**Dibuat dengan ❤️ menggunakan Nuxt 3 + Tailwind CSS**
+**Dibuat dengan menggunakan Nuxt 3 + Tailwind CSS**
